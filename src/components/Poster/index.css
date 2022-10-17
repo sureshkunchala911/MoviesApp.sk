@@ -1,0 +1,66 @@
+.nameContainer {
+  margin-left: 90px;
+  padding-top: 50px;
+}
+.title1 {
+  width: 350px;
+  color: white;
+  font-family: Roboto;
+  font-weight: bold;
+  font-size: 30px;
+  margin-bottom: 20px;
+}
+.overView {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 15px;
+  line-height: 26px;
+  width: 50vw;
+  opacity: 80%;
+  margin-bottom: 20px;
+  color: #ffffff;
+}
+button {
+  width: 74px;
+  height: 40px;
+  background: #ffffff;
+  border-width: 0px;
+  border-radius: 4px;
+  flex: none;
+  order: 0;
+  flex-grow: 0;
+  font-weight: 600;
+  font-size: 14px;
+}
+@media screen and (max-width: 567px) {
+  .title1 {
+    font-size: 25px;
+  }
+  .overView {
+    font-size: 12px;
+    line-height: 13px;
+  }
+}
+.svg {
+  height: 100px;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: stretch;
+  padding-left: 70px;
+  padding-right: 70px;
+}
+.svg::before {
+  left: 0%;
+  right: 0%;
+  top: 0%;
+  bottom: 0%;
+  background: rgb(8, 8, 8);
+  opacity: 0.2;
+  position: absolute;
+  height: 100px;
+  width: 100vw;
+  content: '';
+}

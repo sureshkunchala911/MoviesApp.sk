@@ -1,0 +1,191 @@
+.navbarContainer {
+  height: 100px;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: stretch;
+  padding-left: 70px;
+  padding-right: 70px;
+}
+.navbarContainer::before {
+  left: 0%;
+  right: 0%;
+  top: 0%;
+  bottom: 0%;
+  background: rgb(8, 8, 8);
+  opacity: 0.2;
+  position: absolute;
+  height: 100px;
+  width: 100vw;
+  content: '';
+}
+.top1 {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+.cont {
+  height: 100px;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: stretch;
+  padding-left: 70px;
+  padding-right: 70px;
+  background: rgb(8, 8, 8);
+}
+.cont2 {
+  height: 120px;
+}
+.image1 {
+  position: relative;
+  height: 35px;
+  margin-right: 40px;
+}
+.avatar {
+  height: 30px;
+  color: rgba(255, 255, 255, 1);
+}
+.container1 {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  min-width: 250px;
+  margin-left: 20px;
+}
+.container2 {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin-right: 20px;
+}
+.homeAndPopular {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  list-style-type: none;
+  text-decoration: none;
+}
+.nav-link {
+  text-decoration: none;
+}
+.Home {
+  margin-right: 20px;
+  font-family: Roboto;
+  color: white;
+  font-weight: bold;
+}
+.popular {
+  margin-right: 20px;
+  color: white;
+}
+.list-mini {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding-top: 30px;
+  list-style-type: none;
+}
+.icon {
+  color: white;
+  font-size: 30px;
+  margin-right: 20px;
+  position: relative;
+}
+.icon2 {
+  color: white;
+  font-size: 30px;
+  margin-right: 20px;
+  position: relative;
+}
+.menu-icon {
+  display: none;
+  height: 30px;
+}
+.popup-heading {
+  margin-right: 20px;
+}
+@media screen and (max-width: 567px) {
+  .homeAndPopular {
+    display: none;
+  }
+  .menu-icon {
+    display: block;
+    position: relative;
+  }
+
+  .avatar {
+    display: none;
+    visibility: hidden;
+  }
+}
+@media screen and (min-width: 568px) {
+  .list-mini {
+    display: none;
+  }
+}
+.nav-link {
+  position: relative;
+}
+.Active {
+  color: #ffffff;
+  font-weight: 800;
+}
+
+.No {
+  color: #ffffff90;
+}
+.search-btn {
+  background-color: transparent;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  margin-right: 10px;
+  position: relative;
+}
+
+.search {
+  size: 20px;
+  background-color: #131313;
+  border-width: 2px 1px 0.5px 1px;
+  border-color: grey;
+  margin-right: 8px;
+  height: 30px;
+  padding-left: 10px;
+  width: 125px;
+  color: white;
+  position: relative;
+}
+.search-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.search-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  width: 70px;
+  border: none;
+  cursor: pointer;
+}
+.icons-container {
+  display: flex;
+  justify-content: center;
+}
+.icon-button {
+  background-color: transparent;
+  border-width: 0;
+  padding-top: 5px;
+  margin-top: 4px;
+}

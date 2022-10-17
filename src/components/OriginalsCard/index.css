@@ -1,0 +1,33 @@
+.slick-app-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.react-slick-item {
+  background: transparent;
+}
+@media (min-width: 1024px) {
+  .slick-movie-img {
+    height: 240px;
+    width: 240px;
+    border-radius: 10px;
+    flex-grow: 1;
+  }
+}
+
+@media (max-width: 567px) {
+  .slick-movie-img {
+    margin: 0px 5px;
+    height: 120px;
+    width: 120px;
+  }
+}
+
+@media (max-width: 1023px) {
+  .slick-movie-img {
+    margin: 0px 5px;
+    height: 150px;
+    width: 130px;
+  }
+}
