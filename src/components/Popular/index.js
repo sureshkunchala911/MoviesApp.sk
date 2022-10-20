@@ -72,8 +72,8 @@ class Popular extends Component {
   renderSuccessView = () => {
     const {moviesList} = this.state
     return (
-      <div>
-        <ul className="moviesList">
+      <div className="popularListContainer">
+        <ul className="moviesListPopular">
           {moviesList.map(eachMovie => (
             <Link to={`/movies/${eachMovie.id}`}>
               <li className="listMovie">
@@ -109,9 +109,7 @@ class Popular extends Component {
   render() {
     return (
       <div className="popularContainer">
-        <div>
-          <Navbar />
-        </div>
+        <Navbar />
         <div className="moviesContainer">{this.renderPopularMovies()}</div>
         <div>
           <Footer />

@@ -4,6 +4,7 @@ import Cookies from 'js-cookie'
 import Poster from '../Poster/index'
 import Trending from '../Trending/index'
 import Originals from '../Originals/index'
+import FailureView from '../FailureView'
 import Footer from '../Footer/index'
 import './index.css'
 
@@ -38,7 +39,7 @@ class Home extends Component {
       },
     }
 
-    const response = await fetch(url, options)
+    const response = fetch(url, options)
     console.log(response)
     if (response.ok === true) {
       const data = await response.json()
@@ -62,13 +63,33 @@ class Home extends Component {
     return (
       <>
         <Poster details={mainPoster} />
+        {/* <div className="homeContainer">
+          <div className="home-sizes-container">
+            <Poster details={mainPoster} />
+          </div>
+        </div>
+        <div className="trendingContainer">
+          <h1 className="trending">Trending</h1>
+          <Trending />
+        </div>
+        <div className="originalContainer">
+          <h1 className="original">Original</h1>
+          <Originals />
+        </div>
+        <div>
+          <Footer />
+        </div> */}
       </>
     )
   }
 
+  onRetry = () => {
+    this.getData()
+  }
+
   renderFailureView = () => (
     <div>
-      <p>FailureView</p>
+      <FailureView onRetry={this.onRetry} />
     </div>
   )
 
@@ -102,21 +123,25 @@ class Home extends Component {
   render() {
     return (
       <>
-        <div className="homeContainer">
+        {/* <div className="homeContainer">
           <div className="homeContainer">
-            <div className="home-sizes-container">{this.poster()}</div>
+            {a && <Navbar />}
+            {this.poster()}
           </div>
-          <div className="trendingContainer">
-            <h1 className="trending">Trending</h1>
-            <Trending />
-          </div>
-          <div className="originalContainer">
-            <h1 className="original">Original</h1>
-            <Originals />
-          </div>
-          <div>
-            <Footer />
-          </div>
+        </div> */}
+        <div className="homeContainer">
+          <div className="home-sizes-container">{this.poster()}</div>
+        </div>
+        <div className="trendingContainer">
+          <h1 className="trending">Trending</h1>
+          <Trending />
+        </div>
+        <div className="originalContainer">
+          <h1 className="original">Original</h1>
+          <Originals />
+        </div>
+        <div>
+          <Footer />
         </div>
       </>
     )

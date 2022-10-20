@@ -4,7 +4,6 @@ import Loader from 'react-loader-spinner'
 import {Link} from 'react-router-dom'
 import './index.css'
 import Navbar from '../Navbar'
-import Footer from '../Footer'
 
 const status = {
   initial: 'INITIAL',
@@ -81,45 +80,57 @@ class Search extends Component {
     </div>
   )
 
-  notFound = () => (
-    <div>
-      <p>Not Found</p>
-    </div>
-  )
+  notFound = () => {
+    const {searchInput} = this.state
+    return (
+      <div className="search-no-results-container">
+        <img
+          className="search-no-results"
+          src="https://res.cloudinary.com/dxwppeplp/image/upload/v1666269018/Group_7394_bbxr4k.png"
+          alt="search-no-results"
+        />
+        <p className="no-result-desc">
+          {`Your search for ${searchInput} did not find any matches.`}
+        </p>
+      </div>
+    )
+  }
 
   renderSuccessView = () => {
     const {moviesList} = this.state
     const length = moviesList.length > 0
     return (
-      <>
+      <div className="listContainer">
         {length ? (
-          <div>
-            <ul className="moviesList">
-              {moviesList.map(eachMovie => (
-                <Link to={`/movies/${eachMovie.id}`}>
-                  <li className="listMovie" key={eachMovie.id}>
-                    <img
-                      className="popularImg"
-                      src={eachMovie.posterPath}
-                      alt={eachMovie.title}
-                    />
-                  </li>
-                </Link>
-              ))}
-            </ul>
-          </div>
+          <ul className="moviesList">
+            {moviesList.map(eachMovie => (
+              <Link to={`/movies/${eachMovie.id}`}>
+                <li className="listMovie" key={eachMovie.id}>
+                  <img
+                    className="popularImg"
+                    src={eachMovie.posterPath}
+                    alt={eachMovie.title}
+                  />
+                </li>
+              </Link>
+            ))}
+          </ul>
         ) : (
           this.notFound()
         )}
-      </>
+      </div>
     )
   }
 
   renderCheckView = () => {
     const {searchInput} = this.state
     const emptySearch = searchInput === ''
+    let classEmpty = ''
+    if (emptySearch) {
+      classEmpty = 'empty'
+    }
     return (
-      <div>
+      <div className={classEmpty}>
         {emptySearch ? (
           <div>
             <p className="empty-text">
@@ -150,13 +161,10 @@ class Search extends Component {
 
   render() {
     return (
-      <div className="popularContainer">
-        <div>
-          <Navbar searchInput={this.searchInput} />
-        </div>
-        <div className="moviesContainer">{this.renderPopularMovies()}</div>
-        <div>
-          <Footer />
+      <div className="searchContainer">
+        <Navbar searchInput={this.searchInput} />
+        <div className="moviesSearchContainer">
+          {this.renderPopularMovies()}
         </div>
       </div>
     )

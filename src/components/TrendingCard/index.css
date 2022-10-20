@@ -7,6 +7,9 @@
 .react-slick-item {
   background: transparent;
 }
+.react-slick-li-item {
+  list-style-type: none;
+}
 @media (min-width: 1024px) {
   .slick-movie-img {
     margin: 0px 5px;

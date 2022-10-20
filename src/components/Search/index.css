@@ -1,8 +1,65 @@
 .searchBg3 {
   background-color: black;
-  height: 100vh;
+  height: 100%;
   background-size: cover;
 }
 .head {
   color: white;
+}
+
+.notFound1 {
+  color: white;
+  height: 100vh;
+}
+.moviesSearchContainer {
+  min-height: 100vh;
+  height: 100%;
+  top: 0px;
+  width: 90%;
+}
+.empty {
+  height: 90vh;
+}
+.moviesList {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+.listContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 90%;
+}
+.searchContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: black;
+  height: 100%;
+}
+.search-no-results {
+  height: 250px;
+}
+.no-result-desc {
+  font-family: 'HK Grotesk';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 24px;
+  line-height: 31px;
+  text-align: center;
+  color: #ffffff;
+  margin-top: 31px;
+}
+.search-no-results-container {
+  display: flex;
+  min-height: 90vh;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }

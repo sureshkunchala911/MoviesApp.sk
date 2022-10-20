@@ -55,6 +55,18 @@ class Navbar extends Component {
         SwitchAccount = 'Active'
         contClassName = 'cont'
         break
+      case '/search':
+        SwitchHome = 'No'
+        SwitchPopular = 'No'
+        SwitchAccount = 'No'
+        contClassName = 'cont'
+        break
+      case '/movies/:id':
+        SwitchHome = 'No'
+        SwitchPopular = 'No'
+        SwitchAccount = 'No'
+        contClassName = 'navbarContainer'
+        break
 
       default:
         SwitchHome = 'Active'
@@ -86,7 +98,7 @@ class Navbar extends Component {
               </Link>
             </ul>
           </div>
-          <div className="container2">
+          <div className="container3">
             <div className="search-container">
               {(showSearchBar || path === '/search') && (
                 <input

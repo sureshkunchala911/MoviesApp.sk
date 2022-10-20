@@ -48,16 +48,17 @@
 .avatar {
   height: 30px;
   color: rgba(255, 255, 255, 1);
+  position: relative;
 }
 .container1 {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  min-width: 250px;
+  min-width: 150px;
   margin-left: 20px;
 }
-.container2 {
+.container3 {
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -93,6 +94,7 @@
   padding-top: 30px;
   list-style-type: none;
 }
+
 .icon {
   color: white;
   font-size: 30px;
@@ -124,6 +126,15 @@
   .avatar {
     display: none;
     visibility: hidden;
+    position: relative;
+  }
+  .navbarContainer {
+    padding-left: 32px;
+    padding-right: 32px;
+  }
+  .cont {
+    padding-left: 32px;
+    padding-right: 32px;
   }
 }
 @media screen and (min-width: 568px) {
@@ -136,7 +147,7 @@
 }
 .Active {
   color: #ffffff;
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .No {
