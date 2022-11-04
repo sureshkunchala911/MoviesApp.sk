@@ -10,16 +10,18 @@ import ProtectedRoute from './components/ProtectedRoute'
 import NotFound from './components/NotFound'
 
 const App = () => (
-  <Switch>
-    <Route exact path="/login" component={LoginForm} />
-    <ProtectedRoute exact path="/" component={Home} />
-    <ProtectedRoute exact path="/search" component={Search} />
-    <ProtectedRoute exact path="/movies/:id" component={MovieItemDetails} />
-    <ProtectedRoute exact path="/account" component={Account} />
-    <ProtectedRoute exact path="/popular" component={Popular} />
-    <Route path="/not-found" component={NotFound} />
-    <Redirect to="/not-found" />
-  </Switch>
+  <div className="main-container">
+    <Switch>
+      <Route exact path="/login" component={LoginForm} />
+      <ProtectedRoute exact path="/" component={Home} />
+      <ProtectedRoute exact path="/search" component={Search} />
+      <ProtectedRoute exact path="/movies/:id" component={MovieItemDetails} />
+      <ProtectedRoute exact path="/account" component={Account} />
+      <ProtectedRoute exact path="/popular" component={Popular} />
+      <Route path="/not-found" component={NotFound} />
+      <Redirect to="/not-found" />
+    </Switch>
+  </div>
 )
 
 export default App

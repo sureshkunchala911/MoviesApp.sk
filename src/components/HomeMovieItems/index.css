@@ -1,8 +1,16 @@
-.slick-app-container {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+li {
+  list-style: none;
+}
+.slick-movie-img {
+  width: 90px;
+  height: 64px;
+  border-radius: 8px;
+}
+@media (min-width: 768px) {
+  .slick-movie-img {
+    width: 255px;
+    height: 170px;
+  }
 }
 .react-slick-item {
   background: transparent;
@@ -19,10 +27,10 @@
   }
 }
 
-@media (min-width: 567px) {
+@media (max-width: 768px) {
   .slick-movie-img {
     margin: 0px 5px;
-    height: 150px;
-    width: 150px;
+    height: 120px;
+    width: 100px;
   }
 }

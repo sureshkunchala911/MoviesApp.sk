@@ -1,0 +1,39 @@
+.home-failed-heading {
+  font-family: 'HK Grotesk';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 24px;
+  line-height: 31px;
+  margin-top: 13.41px;
+  color: #ffffff;
+}
+.home-retry-btn {
+  width: 62px;
+  height: 24px;
+  font-family: 'HK Grotesk';
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 24px;
+  color: #171f46;
+  flex: none;
+  order: 1;
+  flex-grow: 0;
+  margin-top: 10px;
+  padding: 12px 12px;
+  gap: 8px;
+  width: 110px;
+  height: 48px;
+  background: #ffffff;
+  border-radius: 4px;
+  flex: none;
+  order: 0;
+  flex-grow: 0;
+}
+.home-failure {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}

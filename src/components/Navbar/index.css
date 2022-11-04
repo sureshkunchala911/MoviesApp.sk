@@ -97,7 +97,7 @@
 
 .icon {
   color: white;
-  font-size: 30px;
+  font-size: 25px;
   margin-right: 20px;
   position: relative;
 }
@@ -122,7 +122,9 @@
     display: block;
     position: relative;
   }
-
+  .list-mini {
+    justify-content: space-around;
+  }
   .avatar {
     display: none;
     visibility: hidden;
@@ -163,22 +165,30 @@
 }
 
 .search {
-  size: 20px;
-  background-color: #131313;
-  border-width: 2px 1px 0.5px 1px;
-  border-color: grey;
-  margin-right: 8px;
-  height: 30px;
-  padding-left: 10px;
-  width: 125px;
-  color: white;
+  width: 100px;
+  height: 16px;
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 16px;
+  color: #babdc2;
+  background-color: transparent;
+  border: none;
+  outline: none;
   position: relative;
 }
 .search-container {
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: space-between;
+  border: 1px solid #f8fafc;
+  padding: 4px 0px 4px 8px;
+  border-radius: 4px;
+  height: 40px;
+  width: 150px;
+  margin-right: 33px;
 }
 
 .search-icon {
@@ -197,6 +207,6 @@
 .icon-button {
   background-color: transparent;
   border-width: 0;
-  padding-top: 5px;
-  margin-top: 4px;
+
+  margin-top: 5px;
 }

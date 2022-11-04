@@ -1,8 +1,9 @@
 import {Component} from 'react'
 import Cookies from 'js-cookie'
 import Loader from 'react-loader-spinner'
-import {Link} from 'react-router-dom'
+import Movie from '../Movie'
 import './index.css'
+import FailureView from '../FailureView/index'
 import Navbar from '../Navbar'
 
 const status = {
@@ -62,14 +63,18 @@ class Search extends Component {
     )
   }
 
+  onRetry = () => {
+    this.getSearchData()
+  }
+
   renderFailureView = () => (
     <div>
-      <h1>Failure</h1>
+      <FailureView onRetry={this.onRetry} />
     </div>
   )
 
   renderLoadingView = () => (
-    <div className="loader-container">
+    <div className="loader-container" testid="loader">
       <Loader
         testid="loader"
         type="TailSpin"
@@ -104,15 +109,7 @@ class Search extends Component {
         {length ? (
           <ul className="moviesList">
             {moviesList.map(eachMovie => (
-              <Link to={`/movies/${eachMovie.id}`}>
-                <li className="listMovie" key={eachMovie.id}>
-                  <img
-                    className="popularImg"
-                    src={eachMovie.posterPath}
-                    alt={eachMovie.title}
-                  />
-                </li>
-              </Link>
+              <Movie eachMovie={eachMovie} key={eachMovie.id} />
             ))}
           </ul>
         ) : (
@@ -132,7 +129,7 @@ class Search extends Component {
     return (
       <div className={classEmpty}>
         {emptySearch ? (
-          <div>
+          <div className="listContainer">
             <p className="empty-text">
               Search the movie,by clicking on the search Icon
             </p>

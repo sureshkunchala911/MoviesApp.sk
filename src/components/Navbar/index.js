@@ -1,6 +1,6 @@
 import {Link, withRouter} from 'react-router-dom'
 import {Component} from 'react'
-import {AiOutlineSearch} from 'react-icons/ai'
+import {HiOutlineSearch} from 'react-icons/hi'
 import {MdMenuOpen} from 'react-icons/md'
 import {ImCross} from 'react-icons/im'
 import './index.css'
@@ -9,12 +9,15 @@ class Navbar extends Component {
   state = {
     showMenuBar: false,
     showSearchBar: false,
+    searchValue: '',
   }
 
   onClickSearchIcon = () => {
-    this.setState(prevState => ({
-      showSearchBar: !prevState.showSearchBar,
-    }))
+    const {searchValue} = this.state
+    const {searchInput} = this.props
+    if (searchInput !== '') {
+      searchInput(searchValue)
+    }
   }
 
   onClickShowMenu = () => {
@@ -26,20 +29,19 @@ class Navbar extends Component {
   }
 
   onChangeSearchInput = event => {
-    const {searchInput} = this.props
-    if (event.key === 'Enter') {
-      searchInput(event.target.value)
-    }
+    this.setState({searchValue: event.target.value})
   }
 
   render() {
-    const {showMenuBar, showSearchBar} = this.state
+    const {showMenuBar, searchValue, showSearchBar} = this.state
     const {match} = this.props
     const {path} = match
     let SwitchHome
     let SwitchPopular
     let SwitchAccount
     let contClassName
+    let searchClassName
+
     console.log(match)
     switch (path) {
       case '/popular':
@@ -60,6 +62,7 @@ class Navbar extends Component {
         SwitchPopular = 'No'
         SwitchAccount = 'No'
         contClassName = 'cont'
+        searchClassName = 'search-container'
         break
       case '/movies/:id':
         SwitchHome = 'No'
@@ -84,11 +87,13 @@ class Navbar extends Component {
       <div className={contClassName}>
         <div className="top1">
           <div className="container1">
-            <img
-              src="https://res.cloudinary.com/dxwppeplp/image/upload/v1664025947/Group_7399_d0or4f.png"
-              alt="website logo"
-              className="image1"
-            />
+            <Link to="/" className="nav-link">
+              <img
+                src="https://res.cloudinary.com/dxwppeplp/image/upload/v1664025947/Group_7399_d0or4f.png"
+                alt="website logo"
+                className="image1"
+              />
+            </Link>
             <ul className="homeAndPopular">
               <Link to="/" className="nav-link">
                 <li className={`Home ${SwitchHome}`}>Home</li>
@@ -99,21 +104,26 @@ class Navbar extends Component {
             </ul>
           </div>
           <div className="container3">
-            <div className="search-container">
+            <div className={searchClassName}>
               {(showSearchBar || path === '/search') && (
                 <input
                   type="search"
-                  onKeyDown={this.onChangeSearchInput}
+                  onChange={this.onChangeSearchInput}
                   placeholder="search"
                   className="search"
+                  value={searchValue}
                 />
               )}
               <Link to="/search">
-                <button type="button" className="icon-button">
-                  <AiOutlineSearch
+                <button
+                  type="button"
+                  className="icon-button"
+                  testid="searchButton"
+                >
+                  <HiOutlineSearch
                     className="icon"
-                    testid="searchButton"
                     onClick={this.onClickSearchIcon}
+                    testid="searchButton"
                   />
                 </button>
               </Link>
@@ -122,7 +132,7 @@ class Navbar extends Component {
               <img
                 className="avatar"
                 src="https://res.cloudinary.com/dxwppeplp/image/upload/v1665233768/Avatar_tzum69.png"
-                alt="avatar"
+                alt="profile"
               />
             </Link>
             <MdMenuOpen

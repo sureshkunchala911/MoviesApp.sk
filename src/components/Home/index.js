@@ -1,120 +1,328 @@
 import {Component} from 'react'
-import Loader from 'react-loader-spinner'
 import Cookies from 'js-cookie'
-import Poster from '../Poster/index'
-import Trending from '../Trending/index'
-import Originals from '../Originals/index'
-import FailureView from '../FailureView'
-import Footer from '../Footer/index'
+import Slider from 'react-slick'
+import Loader from 'react-loader-spinner'
+import 'slick-carousel/slick/slick.css'
+import 'slick-carousel/slick/slick-theme.css'
+import Navbar from '../Navbar'
+import HomeMovieItems from '../HomeMovieItems'
+import Footer from '../Footer'
+
 import './index.css'
 
-const status = {
+const settings = {
+  dots: false,
+  infinite: false,
+  speed: 500,
+  slidesToShow: 4,
+  slidesToScroll: 4,
+
+  responsive: [
+    {
+      breakpoint: 1024,
+      settings: {
+        slidesToShow: 4,
+        slidesToScroll: 1,
+      },
+    },
+    {
+      breakpoint: 600,
+      settings: {
+        slidesToShow: 3,
+        slidesToScroll: 1,
+      },
+    },
+    {
+      breakpoint: 480,
+      settings: {
+        slidesToShow: 2,
+        slidesToScroll: 1,
+      },
+    },
+  ],
+}
+
+const renderOriginalsConstraints = {
   initial: 'INITIAL',
   success: 'SUCCESS',
-  failure: 'FAILURE',
-  inProgress: 'IN_PROGRESS',
+  fail: 'FAIL',
+  loading: 'LOADING',
 }
+const renderTrendingConstraints = {
+  initial: 'INITIAL',
+  success: 'SUCCESS',
+  fail: 'FAIL',
+  loading: 'LOADING',
+}
+
+const isHome = true
 
 class Home extends Component {
   state = {
-    mainPoster: {},
-    apiStatus: status.initial,
+    renderOriginalsStatus: renderOriginalsConstraints.initial,
+    renderTrendingStatus: renderTrendingConstraints.initial,
+    originalMoviesList: [],
+    trendingMoviesList: [],
+    randomMovie: [],
   }
 
   componentDidMount() {
-    this.getData()
+    this.getTrendingMoviesData()
+    this.getOriginalMoviesData()
   }
 
-  getData = async () => {
+  getOriginalMoviesData = async () => {
     this.setState({
-      apiStatus: status.inProgress,
+      renderOriginalsStatus: renderOriginalsConstraints.loading,
     })
     const jwtToken = Cookies.get('jwt_token')
-
-    const url = `https://apis.ccbp.in/movies-app/trending-movies`
     const options = {
       method: 'GET',
-      headers: {
-        Authorization: `Bearer ${jwtToken}`,
-      },
+      headers: {Authorization: `Bearer ${jwtToken}`},
     }
-
-    const response = fetch(url, options)
-    console.log(response)
+    const originalsDataApi = 'https://apis.ccbp.in/movies-app/originals'
+    const response = await fetch(originalsDataApi, options)
     if (response.ok === true) {
       const data = await response.json()
-      const dataLength = data.total
-      const randomPoster = data.results[Math.floor(Math.random() * dataLength)]
-      const updatedData = {
-        id: randomPoster.id,
-        backdropPath: randomPoster.backdrop_path,
-        title: randomPoster.title,
-        overview: randomPoster.overview,
-        posterPath: randomPoster.poster_path,
-      }
-      this.setState({mainPoster: {...updatedData}, apiStatus: status.success})
+      const fetchedOriginalsData = data.results.map(eachMovie => ({
+        backdropPath: eachMovie.backdrop_path,
+        id: eachMovie.id,
+        overview: eachMovie.overview,
+        posterPath: eachMovie.poster_path,
+        title: eachMovie.title,
+      }))
+      const randomNumber = Math.floor(
+        Math.random() * fetchedOriginalsData.length,
+      )
+      const randomMovie = fetchedOriginalsData[randomNumber]
+      this.setState({
+        originalMoviesList: fetchedOriginalsData,
+        renderOriginalsStatus: renderOriginalsConstraints.success,
+        randomMovie,
+      })
     } else {
-      this.setState({apiStatus: status.failure})
+      this.setState({
+        renderOriginalsStatus: renderOriginalsConstraints.fail,
+      })
     }
   }
 
-  renderSuccessView = () => {
-    const {mainPoster} = this.state
+  retryOriginalsMoviesData = () => {
+    this.getOriginalMoviesData()
+  }
+
+  getTrendingMoviesData = async () => {
+    this.setState({renderTrendingStatus: renderTrendingConstraints.loading})
+    const jwtToken = Cookies.get('jwt_token')
+    const options = {
+      method: 'GET',
+      headers: {Authorization: `Bearer ${jwtToken}`},
+    }
+    const trendingDataApi = 'https://apis.ccbp.in/movies-app/trending-movies'
+    const response = await fetch(trendingDataApi, options)
+    if (response.ok === true) {
+      const data = await response.json()
+      const fetchedTrendingData = data.results.map(eachMovie => ({
+        backdropPath: eachMovie.backdrop_path,
+        id: eachMovie.id,
+        overview: eachMovie.overview,
+        posterPath: eachMovie.poster_path,
+        title: eachMovie.title,
+      }))
+      this.setState({
+        trendingMoviesList: fetchedTrendingData,
+        renderTrendingStatus: renderTrendingConstraints.success,
+      })
+    } else {
+      this.setState({renderTrendingStatus: renderTrendingConstraints.fail})
+    }
+  }
+
+  retryTrendingMoviesData = () => {
+    this.getTrendingMoviesData()
+  }
+
+  renderPosterSuccessView = () => {
+    const {randomMovie} = this.state
+    const {title, overview, backdropPath} = randomMovie
+
+    return (
+      <div
+        style={{backgroundImage: `url(${backdropPath})`}}
+        className="home-page"
+      >
+        <Navbar isHome={isHome} />
+        <div className="home-movie-page">
+          <h1 className="posterTitle">{title}</h1>
+          <h1 className="over-view">{overview}</h1>
+          <button type="button" className="play-btn">
+            Play
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  renderOriginalsSuccessView = () => {
+    const {originalMoviesList} = this.state
     return (
       <>
-        <Poster details={mainPoster} />
-        {/* <div className="homeContainer">
-          <div className="home-sizes-container">
-            <Poster details={mainPoster} />
-          </div>
+        <div className="movies-list-page">
+          <Slider className="slick" {...settings}>
+            {originalMoviesList.map(eachMovie => (
+              <HomeMovieItems eachMovie={eachMovie} key={eachMovie.id} />
+            ))}
+          </Slider>
         </div>
-        <div className="trendingContainer">
-          <h1 className="trending">Trending</h1>
-          <Trending />
-        </div>
-        <div className="originalContainer">
-          <h1 className="original">Original</h1>
-          <Originals />
-        </div>
-        <div>
-          <Footer />
-        </div> */}
       </>
     )
   }
 
-  onRetry = () => {
-    this.getData()
+  renderTrendingSuccessView = () => {
+    const {trendingMoviesList} = this.state
+
+    return (
+      <>
+        <div className="movies-list-page">
+          <Slider className="slick" {...settings}>
+            {trendingMoviesList.map(eachMovie => (
+              <HomeMovieItems eachMovie={eachMovie} key={eachMovie.id} />
+            ))}
+          </Slider>
+        </div>
+      </>
+    )
   }
 
-  renderFailureView = () => (
-    <div>
-      <FailureView onRetry={this.onRetry} />
+  renderPosterErrorView = () => (
+    <>
+      <Navbar />
+      <div className="error-page-container">
+        <div className="error-page">
+          <img
+            className="warning-icon"
+            alt="failure view"
+            src="https://res.cloudinary.com/dkbxi5qts/image/upload/v1660451047/movies%20prime%20app/alert-triangle_najaul.png"
+          />
+          <p className="poster-error-msg">
+            Something went wrong. Please try again
+          </p>
+          <button
+            onClick={this.retryOriginalsMoviesData}
+            className="poster-try-again-btn"
+            type="button"
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    </>
+  )
+
+  renderOriginalsErrorView = () => (
+    <div className="error-page-container">
+      <div className="thumbnail-error-page">
+        <img
+          className="thumbnail-warning-icon"
+          alt="failure view"
+          src="https://res.cloudinary.com/dkbxi5qts/image/upload/v1660451047/movies%20prime%20app/alert-triangle_najaul.png"
+        />
+        <p className="thumbnail-error-msg">
+          Something went wrong. Please try again
+        </p>
+        <button
+          onClick={this.retryOriginalsMoviesData}
+          className="thumbnail-try-again-btn"
+          type="button"
+        >
+          Try Again
+        </button>
+      </div>
     </div>
   )
 
-  renderLoadingView = () => (
-    <div className="loader-container">
-      <Loader
-        testid="loader"
-        type="TailSpin"
-        height={35}
-        width={380}
-        color=" #D81F26"
-      />
+  renderTrendingErrorView = () => (
+    <div className="error-page-container">
+      <div className="thumbnail-error-page">
+        <img
+          className="thumbnail-warning-icon"
+          alt="failure view"
+          src="https://res.cloudinary.com/dkbxi5qts/image/upload/v1660451047/movies%20prime%20app/alert-triangle_najaul.png"
+        />
+        <p className="thumbnail-error-msg">
+          Something went wrong. Please try again
+        </p>
+        <button
+          onClick={this.retryTrendingMoviesData}
+          className="thumbnail-try-again-btn"
+          type="button"
+        >
+          Try Again
+        </button>
+      </div>
     </div>
   )
 
-  poster = () => {
-    const {apiStatus} = this.state
-    switch (apiStatus) {
-      case status.success:
-        return this.renderSuccessView()
-      case status.failure:
-        return this.renderFailureView()
-      case status.inProgress:
-        return this.renderLoadingView()
+  renderPosterLoadingView = () => (
+    <>
+      <Navbar />
+      <div className="error-page-container">
+        <div className="error-page">
+          <div className="loader-container" testid="loader">
+            <Loader type="TailSpin" color="#D81F26" height={50} width={50} />
+          </div>
+        </div>
+      </div>
+    </>
+  )
 
+  renderThumbnailLoadingView = () => (
+    <div className="error-page-container">
+      <div className="thumbnail-error-page">
+        <div className="loader-container" testid="loader">
+          <Loader type="TailSpin" color="#D81F26" height={50} width={50} />
+        </div>
+      </div>
+    </div>
+  )
+
+  renderOriginalsSwitchViews = () => {
+    const {renderOriginalsStatus} = this.state
+    switch (renderOriginalsStatus) {
+      case renderOriginalsConstraints.loading:
+        return this.renderThumbnailLoadingView()
+      case renderOriginalsConstraints.success:
+        return this.renderOriginalsSuccessView()
+      case renderOriginalsConstraints.fail:
+        return this.renderOriginalsErrorView()
+      default:
+        return null
+    }
+  }
+
+  renderTrendingSwitchViews = () => {
+    const {renderTrendingStatus} = this.state
+    switch (renderTrendingStatus) {
+      case renderTrendingConstraints.loading:
+        return this.renderThumbnailLoadingView()
+      case renderTrendingConstraints.success:
+        return this.renderTrendingSuccessView()
+      case renderTrendingConstraints.fail:
+        return this.renderTrendingErrorView()
+      default:
+        return null
+    }
+  }
+
+  renderPosterSwitchViews = () => {
+    const {renderOriginalsStatus} = this.state
+    switch (renderOriginalsStatus) {
+      case renderOriginalsConstraints.loading:
+        return this.renderPosterLoadingView()
+      case renderOriginalsConstraints.success:
+        return this.renderPosterSuccessView()
+      case renderOriginalsConstraints.fail:
+        return this.renderPosterErrorView()
       default:
         return null
     }
@@ -123,28 +331,19 @@ class Home extends Component {
   render() {
     return (
       <>
-        {/* <div className="homeContainer">
-          <div className="homeContainer">
-            {a && <Navbar />}
-            {this.poster()}
-          </div>
-        </div> */}
-        <div className="homeContainer">
-          <div className="home-sizes-container">{this.poster()}</div>
+        {this.renderPosterSwitchViews()}
+        <div className="trendingContainer">
+          <h1 className="trending">Trending Now</h1>
+          {this.renderTrendingSwitchViews()}
         </div>
         <div className="trendingContainer">
-          <h1 className="trending">Trending</h1>
-          <Trending />
+          <h1 className="trending">Originals</h1>
+          {this.renderOriginalsSwitchViews()}
         </div>
-        <div className="originalContainer">
-          <h1 className="original">Original</h1>
-          <Originals />
-        </div>
-        <div>
-          <Footer />
-        </div>
+        <Footer />
       </>
     )
   }
 }
+
 export default Home

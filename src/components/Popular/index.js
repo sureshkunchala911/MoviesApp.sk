@@ -1,8 +1,9 @@
 import {Component} from 'react'
 import Cookies from 'js-cookie'
 import Loader from 'react-loader-spinner'
-import {Link} from 'react-router-dom'
+import Movie from '../Movie'
 import './index.css'
+import FailureView from '../FailureView'
 import Navbar from '../Navbar'
 import Footer from '../Footer'
 
@@ -51,14 +52,12 @@ class Popular extends Component {
     }
   }
 
-  renderFailureView = () => (
-    <div>
-      <h1>Failure</h1>
-    </div>
-  )
+  onRetry = () => this.getPopularData()
+
+  renderFailureView = () => <FailureView onRetry={this.onRetry} />
 
   renderLoadingView = () => (
-    <div className="loader-container">
+    <div className="loader-container" testid="loader">
       <Loader
         testid="loader"
         type="TailSpin"
@@ -75,16 +74,7 @@ class Popular extends Component {
       <div className="popularListContainer">
         <ul className="moviesListPopular">
           {moviesList.map(eachMovie => (
-            <Link to={`/movies/${eachMovie.id}`}>
-              <li className="listMovie">
-                <img
-                  className="popularImg"
-                  src={eachMovie.posterPath}
-                  alt={eachMovie.title}
-                  key={eachMovie.id}
-                />
-              </li>
-            </Link>
+            <Movie eachMovie={eachMovie} key={eachMovie.id} />
           ))}
         </ul>
       </div>

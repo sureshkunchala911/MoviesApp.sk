@@ -1,91 +1,103 @@
-import Loader from 'react-loader-spinner'
 import {Component} from 'react'
+import {format} from 'date-fns'
+import Loader from 'react-loader-spinner'
 import Cookies from 'js-cookie'
-import {Link} from 'react-router-dom'
 
+import Navbar from '../Navbar'
+import SimilarMovies from '../SimilarMovies'
 import Footer from '../Footer'
+import FailureView from '../FailureView'
 
 import './index.css'
-import Movie from '../Movie'
 
-const apiStatusConstants = {
-  initial: 'INITIAL',
-  success: 'SUCCESS',
-  failure: 'FAILURE',
-  inProgress: 'IN_PROGRESS',
+const AvailableLanguages = props => {
+  const {eachItem} = props
+  const {englishName} = eachItem
+  return (
+    <li className="info-items list-item">
+      <p>{englishName}</p>
+    </li>
+  )
 }
 
-class MovieItemDetails extends Component {
-  state = {
-    apiStatus: apiStatusConstants.initial,
-    movieDetails: [],
-    genres: [],
-    spokenLanguages: [],
-    similarMovies: [],
-  }
+const GenreList = props => {
+  const {eachItem} = props
+  const {name} = eachItem
+  return (
+    <li className="info-items list-item">
+      <p>{name}</p>
+    </li>
+  )
+}
+
+const renderConstraints = {
+  initial: 'INITIAL',
+  success: 'SUCCESS',
+  fail: 'FAIL',
+  loading: 'LOADING',
+}
+
+class MovieDetails extends Component {
+  state = {movieDetailsList: [], renderStatus: renderConstraints.initial}
 
   componentDidMount() {
     this.getMovieDetails()
   }
 
   getMovieDetails = async () => {
-    this.setState({apiStatus: apiStatusConstants.inProgress})
+    this.setState({renderStatus: renderConstraints.loading})
+    const jwtToken = Cookies.get('jwt_token')
     const {match} = this.props
     const {params} = match
     const {id} = params
-    const jwtToken = Cookies.get('jwt_token')
-    const apiUrl = `https://apis.ccbp.in/movies-app/movies/${id}`
+    const movieDetailsApi = `https://apis.ccbp.in/movies-app/movies/${id}`
     const options = {
-      headers: {
-        Authorization: `Bearer ${jwtToken}`,
-      },
       method: 'GET',
+      headers: {Authorization: `Bearer ${jwtToken}`},
     }
-    const response = await fetch(apiUrl, options)
-    if (response.ok === true) {
+    const response = await fetch(movieDetailsApi, options)
+    if (response.ok) {
       const data = await response.json()
-      const updatedData = [data.movie_details].map(each => ({
-        id: each.id,
-        backdropPath: each.backdrop_path,
-        budget: each.budget,
-        title: each.title,
-        overview: each.overview,
-        originalLanguage: each.original_language,
-        releaseDate: each.release_date,
-        count: each.vote_count,
-        rating: each.vote_average,
-        runtime: each.runtime,
-        posterPath: each.poster_path,
+      const updatedGenreList = data.movie_details.genres.map(eachGenre => ({
+        id: eachGenre.id,
+        name: eachGenre.name,
       }))
-      // console.log(updatedData)
-      const genresData = data.movie_details.genres.map(each => ({
-        id: each.id,
-        name: each.name,
-      }))
-      // console.log(genresData)
-      const updatedSimilarData = data.movie_details.similar_movies.map(
-        each => ({
-          id: each.id,
-          posterPath: each.poster_path,
-          title: each.title,
+      const updatedSimilarMovies = data.movie_details.similar_movies.map(
+        eachMovie => ({
+          backdropPath: eachMovie.backdrop_path,
+          id: eachMovie.id,
+          posterPath: eachMovie.poster_path,
+          title: eachMovie.title,
         }),
       )
-      // console.log(updatedSimilarData)
-      const updatedLanguagesData = data.movie_details.spoken_languages.map(
-        each => ({
-          id: each.id,
-          language: each.english_name,
+      const updatedSpokenLanguages = data.movie_details.spoken_languages.map(
+        eachLanguage => ({
+          id: eachLanguage.id,
+          englishName: eachLanguage.english_name,
         }),
       )
+      const updatedData = {
+        adult: data.movie_details.adult,
+        backdropPath: data.movie_details.backdrop_path,
+        budget: data.movie_details.budget,
+        genres: updatedGenreList,
+        id: data.movie_details.id,
+        overview: data.movie_details.overview,
+        posterPath: data.movie_details.poster_path,
+        releaseDate: data.movie_details.release_date,
+        runtime: data.movie_details.runtime,
+        similarMovies: updatedSimilarMovies.slice(0, 6),
+        spokenLanguages: updatedSpokenLanguages,
+        title: data.movie_details.title,
+        voteAverage: data.movie_details.vote_average,
+        voteCount: data.movie_details.vote_count,
+      }
       this.setState({
-        movieDetails: updatedData,
-        genres: genresData,
-        spokenLanguages: updatedLanguagesData,
-        similarMovies: updatedSimilarData.slice(0, 6),
-        apiStatus: apiStatusConstants.success,
+        movieDetailsList: updatedData,
+        renderStatus: renderConstraints.success,
       })
     } else {
-      this.setState({apiStatus: apiStatusConstants.failure})
+      this.setState({renderStatus: renderConstraints.fail})
     }
   }
 
@@ -93,155 +105,127 @@ class MovieItemDetails extends Component {
     this.getMovieDetails()
   }
 
-  renderFailureView = () => (
-    <div>
-      <p>failure</p>
-    </div>
+  renderLoaderView = () => (
+    <>
+      <Navbar />
+      <div className="loader-container" testid="loader">
+        <Loader type="TailSpin" color="#D81F26" height={50} width={50} />
+      </div>
+    </>
   )
 
-  renderLoadingView = () => (
-    <div className="loader-container">
-      <Loader
-        testid="loader"
-        type="TailSpin"
-        height={35}
-        width={380}
-        color=" #D81F26"
-      />
-    </div>
+  renderFailureView = () => (
+    <>
+      <Navbar />
+      <FailureView onRetry={this.onRetry} />
+    </>
   )
 
   renderSuccessView = () => {
-    const {movieDetails, genres, spokenLanguages, similarMovies} = this.state
-    const newMovieDetails = {...movieDetails[0]}
-    const {releaseDate, count, rating, budget} = newMovieDetails
-    const months = [
-      'January',
-      'February',
-      'March',
-      'April',
-      'May',
-      'June',
-      'July',
-      'August',
-      'September',
-      'October',
-      'November',
-      'December',
-    ]
-    const d = new Date(releaseDate)
-    const monthName = months[d.getMonth()]
-    const date = new Date(releaseDate)
-    const year = date.getFullYear()
-    const day = date.getDay().toString()
-    let dateEndingWord
-    if (day.endsWith('1')) {
-      dateEndingWord = 'st'
-    } else if (day.endsWith('2')) {
-      dateEndingWord = 'nd'
-    } else if (day.endsWith('3')) {
-      dateEndingWord = 'rd'
-    } else {
-      dateEndingWord = 'th'
-    }
-    console.log(day, date, monthName, year)
+    const {movieDetailsList} = this.state
+
+    const {
+      adult,
+      backdropPath,
+      budget,
+      genres,
+      overview,
+      releaseDate,
+      runtime,
+      similarMovies,
+      spokenLanguages,
+      title,
+      voteAverage,
+      voteCount,
+    } = movieDetailsList
+    const inHours = Math.floor(runtime / 60)
+    const inMinutes = runtime % 60
+    const runTimeInHoursAndMinutes = `${inHours}h ${inMinutes}m`
+    const certificateName = adult ? 'A' : 'U/A'
+    const releaseYear = format(new Date(releaseDate), 'yyyy')
+    const releaseDateFormat = format(new Date(releaseDate), 'do MMMM yyyy')
     return (
       <>
-        {/* <p className="json">{JSON.stringify(movieDetails)}</p> */}
-        {/* <PlayVideoView movieDetails={movieDetails} /> */}
-        <div className="">
-          <div className="similar-poster">
-            {movieDetails.map(each => (
-              <Movie movieDetails={each} key={each.id} />
-            ))}
+        <div
+          style={{backgroundImage: `url(${backdropPath})`}}
+          className="movie-detail-page"
+        >
+          <Navbar />
+          <div className="movie-detail-movie-page">
+            <h1 className="title">{title}</h1>
+            <div className="more-details">
+              <p className="duration">{runTimeInHoursAndMinutes}</p>
+              <p className="certificate">{certificateName}</p>
+              <p className="release-year">{releaseYear}</p>
+            </div>
+            <p className="over-view">{overview}</p>
+            <button type="button" className="play-btn">
+              Play
+            </button>
           </div>
         </div>
-        <div className="additional-movie-info-container additional-info-sm-container">
-          <ul className="each-genre-ul-container">
-            <h1 className="movie-info-genre-heading">Genres</h1>
-            {genres.map(eachGenre => (
-              <li className="movie-info-each-genre" key={eachGenre.id}>
-                {eachGenre.name}
-              </li>
-            ))}
-          </ul>
-          <ul className="each-genre-ul-container">
-            <h1 className="movie-info-genre-heading">Audio Available</h1>
-            {spokenLanguages.map(eachAudio => (
-              <li className="movie-info-each-genre" key={eachAudio.id}>
-                {eachAudio.language}
-              </li>
-            ))}
-          </ul>
-          <div className="each-genre-ul-container">
-            <h1 className="movie-info-rating-count-heading">Rating Count</h1>
-            <p className="movie-info-rating-count">{count}</p>
-            {/* <p>{JSON.stringify(movieDetails)}</p> */}
-            {/* <p>{JSON.stringify(newMovieDetails)}</p> */}
-            <h1 className="movie-info-rating-avg-heading">Rating Average</h1>
-            <p className="movie-info-rating">{rating}</p>
+        <div className="additional-information">
+          <div className="movie-info">
+            <div className="info">
+              <h1 className="info-heading">Genres</h1>
+              <ul className="list-items">
+                {genres.map(eachItem => (
+                  <GenreList eachItem={eachItem} key={eachItem.id} />
+                ))}
+              </ul>
+            </div>
+            <div className="info">
+              <h1 className="info-heading">Audio Available</h1>
+              <ul className="list-items">
+                {spokenLanguages.map(eachItem => (
+                  <AvailableLanguages eachItem={eachItem} key={eachItem.id} />
+                ))}
+              </ul>
+            </div>
+            <div className="info">
+              <h1 className="info-heading">Rating Count</h1>
+              <p className="info-items info-name">{voteCount}</p>
+              <h1 className="info-heading">Rating Average</h1>
+              <p className="info-items info-name">{voteAverage}</p>
+            </div>
+            <div className="info info1">
+              <h1 className="info-heading">Budget</h1>
+              <p className="info-items info-name">{budget}</p>
+              <h1 className="info-heading">Release Date</h1>
+              <p className="info-items info-name">{releaseDateFormat}</p>
+            </div>
           </div>
-          <div className="each-genre-ul-container">
-            <h1 className="movie-info-budget-heading">Budget</h1>
-            <p className="movie-info-budget">{budget}</p>
-            {/* <p>{JSON.stringify(movieDetails)}</p> */}
-            {/* <p>{JSON.stringify(newMovieDetails)}</p> */}
-            <h1 className="movie-info-release-date">Release Date </h1>
-            <p>
-              <span className="movie-info-date">{day}</span>
-              <span className="movie-info-date-end">{dateEndingWord}</span>
-              <span className="movie-info-month-name">{monthName}</span>
-              <span className=" movie-info-year">{year}</span>
-            </p>
+          <div className="similar-movies-container">
+            <h1 className="more-like-this-text">More like this</h1>
+            <div className="similar-movies-list">
+              {similarMovies.map(eachMovie => (
+                <SimilarMovies eachMovie={eachMovie} key={eachMovie.id} />
+              ))}
+            </div>
           </div>
-        </div>
-        <div className="similar-movies-container">
-          <h1 className="more-like-this">More like this</h1>
-          <ul className="popular-ul-container similar-ul-container">
-            {similarMovies.map(each => (
-              <Link to={`/movies/${each.id}`} key={each.id} target="blank">
-                <li className="similar-list" key={each.id}>
-                  <img
-                    className="similar-image"
-                    src={each.posterPath}
-                    alt={each.title}
-                  />
-                </li>
-              </Link>
-            ))}
-          </ul>
+          <Footer />
         </div>
       </>
     )
   }
 
-  renderVideoDetailView = () => {
-    const {apiStatus} = this.state
-
-    switch (apiStatus) {
-      case apiStatusConstants.success:
+  renderSwitchView = () => {
+    const {renderStatus} = this.state
+    switch (renderStatus) {
+      case renderConstraints.loading:
+        return this.renderLoaderView()
+      case renderConstraints.success:
         return this.renderSuccessView()
-      case apiStatusConstants.failure:
+      case renderConstraints.fail:
         return this.renderFailureView()
-      case apiStatusConstants.inProgress:
-        return this.renderLoadingView()
       default:
         return null
     }
   }
 
   render() {
-    return (
-      <div className="dummy">
-        <div
-          className="video-details-view-container"
-          data-testid="videoItemDetails"
-        >
-          {this.renderVideoDetailView()}
-        </div>
-        <Footer />
-      </div>
-    )
+    return <>{this.renderSwitchView()}</>
   }
 }
-export default MovieItemDetails
+
+export default MovieDetails

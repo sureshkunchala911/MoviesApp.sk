@@ -1,3 +1,4 @@
+import {Redirect} from 'react-router-dom'
 import {Component} from 'react'
 import Cookies from 'js-cookie'
 
@@ -99,12 +100,16 @@ class LoginForm extends Component {
 
   render() {
     const {showSubmitError, errorMsg} = this.state
+    const jwtToken = Cookies.get('jwt_token')
+    if (jwtToken !== undefined) {
+      return <Redirect to="/" />
+    }
     return (
       <div className="login-form-container">
         <img
           className="login-website-logo"
           src="https://res.cloudinary.com/dxwppeplp/image/upload/v1664025947/Group_7399_d0or4f.png"
-          alt="website logo"
+          alt="login website logo"
         />
         <form className="form-container" onSubmit={this.submitForm}>
           <h1 className="login-text">Login</h1>
